@@ -43,6 +43,13 @@ type Message struct {
 	Body    string   `json:"body"`
 }
 
+type MessageTemplate struct {
+	From    string   `json:"from" yaml:"from"`
+	To      []string `json:"to" yaml:"to"`
+	Subject string   `json:"subject" yaml:"subject"`
+	Body    string   `json:"body" yaml:"body"`
+}
+
 type MessageTask struct {
 	Id                 uuid.UUID  `json:"id"`
 	Provider           string     `json:"provider"`

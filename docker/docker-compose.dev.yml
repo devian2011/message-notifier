@@ -1,0 +1,20 @@
+services:
+  pgDb:
+    image: postgres:16.2-alpine
+    env_file:
+      - ../.env
+    networks:
+      - notifier
+    ports:
+      - "${VLAN_IP}:5432:5432"
+    volumes:
+      - pgData:/var/lib/postgresql/data
+
+volumes:
+  pgData:
+    name: "notifier-pg-data"
+
+networks:
+  notifier:
+    name: notifier
+    external: true

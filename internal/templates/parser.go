@@ -2,18 +2,8 @@ package templates
 
 import (
 	"bytes"
-	"os"
 	"text/template"
 )
-
-func ParseFile(filePath string, params map[string]interface{}) (string, error) {
-	body, err := os.ReadFile(filePath)
-	if err != nil {
-		return "", ErrTemplateFileNotExists
-	}
-
-	return Parse(string(body), params)
-}
 
 func Parse(body string, params map[string]interface{}) (string, error) {
 	buf := bytes.Buffer{}
