@@ -150,7 +150,7 @@ func TestStorage_ClearExpired(t *testing.T) {
 		t.Error("message three must be in Closed queue")
 	}
 
-	time.Sleep(2 * time.Second)
+	storage.ClearExpired()
 
 	if _, exists := storage.data.Process[msg.Id]; !exists {
 		t.Error("message one must be in Process queue after clear")

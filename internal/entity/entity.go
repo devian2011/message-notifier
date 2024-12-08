@@ -62,3 +62,9 @@ type MessageTask struct {
 	CreatedAt time.Time `json:"created_at"`
 	RetryCnt  uint8     `json:"retry_cnt"`
 }
+
+type SearchParams struct {
+	Provider []string
+	Status   []TaskStatus
+	OrderBy  []string
+}

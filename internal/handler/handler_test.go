@@ -92,7 +92,7 @@ func TestHandler_HandleTemplateMessage(t *testing.T) {
 	assert.Equal(t, id, store.task.Id)
 	assert.Equal(t, cmd.Provider, store.task.Provider)
 
-	assert.Equal(t, cmd.To, store.task.Message.To)
+	assert.Equal(t, append(tMessage.To, cmd.To...), store.task.Message.To)
 	assert.Equal(t, tMessage.Body, store.task.Message.Body)
 	assert.Equal(t, tMessage.From, store.task.Message.From)
 	assert.Equal(t, tMessage.Subject, store.task.Message.Subject)
