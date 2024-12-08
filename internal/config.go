@@ -1,6 +1,10 @@
 package internal
 
 import (
+	"os"
+
+	"gopkg.in/yaml.v3"
+
 	"notifier/internal/providers"
 	"notifier/internal/templates"
 	"notifier/internal/transport"
@@ -11,10 +15,19 @@ type Config struct {
 	Transport struct {
 		Http transport.HttpConfig `json:"http" yaml:"http"`
 	} `json:"transport" yaml:"transport"`
-	Providers []providers.Config      `json:"providers" yaml:"providers"`
-	Templates []templates.TemplateCfg `json:"templates" yaml:"templates"`
+	Providers map[string]providers.Config      `json:"providers" yaml:"providers"`
+	Templates map[string]templates.TemplateCfg `json:"templates" yaml:"templates"`
 }
 
 func loadConfig(filePath string) (*Config, error) {
-	return &Config{}, nil
+	file, fileOpenErr := os.Open(filePath)
+	if fileOpenErr != nil {
+		return nil, fileOpenErr
+	}
+
+	cfg := &Config{}
+
+	decodeErr := yaml.NewDecoder(file).Decode(cfg)
+
+	return cfg, decodeErr
 }

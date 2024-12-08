@@ -1,6 +1,11 @@
 package transport
 
 import (
+	"encoding/json"
+	"github.com/google/uuid"
+	"net/http"
+	"notifier/internal/entity"
+
 	"github.com/fasthttp/router"
 	"github.com/valyala/fasthttp"
 )
@@ -26,12 +31,78 @@ func NewHttpTransport(cfg *HttpConfig, handler Handler) *HttpTransport {
 		Handler: rtr.Handler,
 	}
 
-	rtr.POST("/api/notify/message/template", func(ctx *fasthttp.RequestCtx) {
+	type responseData struct {
+		Error error     `json:"error"`
+		Code  int       `json:"code"`
+		Id    uuid.UUID `json:"id"`
+	}
 
+	rtr.POST("/api/v1/notify/message/template", func(ctx *fasthttp.RequestCtx) {
+		command := &entity.TemplateCommand{}
+		unmarshalErr := json.Unmarshal(ctx.Request.Body(), command)
+		if unmarshalErr != nil {
+			ctx.SetStatusCode(http.StatusBadRequest)
+			rData, _ := json.Marshal(responseData{
+				Error: unmarshalErr,
+				Code:  http.StatusBadRequest,
+			})
+			ctx.Response.SetBody(rData)
+
+			return
+		}
+
+		id, err := handler.HandleTemplateMessage(*command)
+		if err != nil {
+			ctx.SetStatusCode(http.StatusBadRequest)
+			rData, _ := json.Marshal(responseData{
+				Error: err,
+				Code:  http.StatusBadRequest,
+			})
+			ctx.Response.SetBody(rData)
+
+			return
+		}
+		ctx.SetStatusCode(http.StatusOK)
+		rData, _ := json.Marshal(responseData{
+			Error: nil,
+			Code:  http.StatusOK,
+			Id:    id,
+		})
+		ctx.Response.SetBody(rData)
 	})
 
-	rtr.POST("/api/notify/message/custom", func(ctx *fasthttp.RequestCtx) {
+	rtr.POST("/api/v1/notify/message/custom", func(ctx *fasthttp.RequestCtx) {
+		command := &entity.CustomCommand{}
+		unmarshalErr := json.Unmarshal(ctx.Request.Body(), command)
+		if unmarshalErr != nil {
+			ctx.SetStatusCode(http.StatusBadRequest)
+			rData, _ := json.Marshal(responseData{
+				Error: unmarshalErr,
+				Code:  http.StatusBadRequest,
+			})
+			ctx.Response.SetBody(rData)
 
+			return
+		}
+
+		id, err := handler.HandleCustomMessage(*command)
+		if err != nil {
+			ctx.SetStatusCode(http.StatusBadRequest)
+			rData, _ := json.Marshal(responseData{
+				Error: err,
+				Code:  http.StatusBadRequest,
+			})
+			ctx.Response.SetBody(rData)
+
+			return
+		}
+		ctx.SetStatusCode(http.StatusOK)
+		rData, _ := json.Marshal(responseData{
+			Error: nil,
+			Code:  http.StatusOK,
+			Id:    id,
+		})
+		ctx.Response.SetBody(rData)
 	})
 
 	return &HttpTransport{
@@ -39,10 +110,6 @@ func NewHttpTransport(cfg *HttpConfig, handler Handler) *HttpTransport {
 		srv:    srv,
 		router: rtr,
 	}
-}
-
-func (s *HttpTransport) Register() {
-
 }
 
 func (s *HttpTransport) Run(errCh chan error) {

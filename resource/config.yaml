@@ -6,21 +6,28 @@ transport:
       certFile: ''
       keyFile: ''
 
+storage:
+  type: file
+  params:
+    directory: ./store
+
 providers:
-  - provider: smtp
+  GmailNoReply:
+    provider: smtp
     code: GmailNoReply
     params:
       host: smtp.gmail.com
       port: 587
       username: 'env APP_GMAIL_NO_REPLY_USERNAME'
       password: 'env APP_GMAIL_NO_REPLY_PASSWORD'
-  - provider: TG
+  TG_BOT:
+    provider: TG
     code: TG_BOT
     params:
       token: 'env APP_TG_BOT_TOKEN'
 
 templates:
-  - code: test_message_string
+  test_message_string:
     from: "test@test.com"
     to:
       - "romanov.i.u@yandex.ru"
@@ -31,7 +38,8 @@ templates:
         
         * {{.first}}
         * {{.second}}
-  - code: test_message_template
+  test_message_template:
+    from: "test@test.com"
     to:
       - "romanov.i.u@yandex.ru"
     subject: "test email"

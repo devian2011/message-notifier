@@ -1,0 +1,180 @@
+linters:
+  disable-all: true
+  enable:
+    - bodyclose
+    - copyloopvar
+    - dogsled
+    - dupl
+    - errcheck
+    - errorlint
+    - funlen
+    - gocheckcompilerdirectives
+    - gochecknoinits
+    - gochecknoinits
+    - goconst
+    - gocritic
+    - gocyclo
+    - godox
+    - gofmt
+    - goimports
+    - mnd
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - intrange
+    - ineffassign
+    - lll
+    - misspell
+    - nakedret
+    - noctx
+    - nolintlint
+    - revive
+    - staticcheck
+    - stylecheck
+    - testifylint
+    - unconvert
+    - unparam
+    - unused
+    - whitespace
+
+
+linters-settings:
+  dupl:
+    threshold: 100
+  funlen:
+    lines: -1
+    statements: 50
+  goconst:
+    min-len: 2
+    min-occurrences: 3
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - experimental
+      - opinionated
+      - performance
+      - style
+    disabled-checks:
+      - dupImport
+      - ifElseChain
+      - octalLiteral
+      - whyNoLint
+  gocyclo:
+    min-complexity: 15
+  godox:
+    keywords:
+      - FIXME
+  gofmt:
+    rewrite-rules:
+      - pattern: 'interface{}'
+        replacement: 'any'
+  goimports:
+    local-prefixes: github.com/golangci/golangci-lint
+  mnd:
+    checks:
+      - argument
+      - case
+      - condition
+      - return
+    ignored-numbers:
+      - '0'
+      - '1'
+      - '2'
+      - '3'
+    ignored-functions:
+      - strings.SplitN
+  govet:
+    settings:
+      printf:
+        funcs:
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Infof
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Warnf
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
+    enable:
+      - nilness
+      - shadow
+  errorlint:
+    asserts: false
+  lll:
+    line-length: 140
+  misspell:
+    locale: US
+    ignore-words:
+      - "importas" # linter name
+  nolintlint:
+    allow-unused: false # report any unused nolint directives
+    require-explanation: true # require an explanation for nolint directives
+    require-specific: true # require nolint directives to be specific about which linter is being skipped
+  revive:
+    rules:
+      - name: indent-error-flow
+      - name: unexported-return
+        disabled: true
+      - name: unused-parameter
+      - name: unused-receiver
+
+issues:
+  exclude-rules:
+    - path: (.+)_test\.go
+      linters:
+        - dupl
+        - mnd
+        - lll
+    - path: pkg/golinters
+      linters:
+        - dupl
+    - path: pkg/commands/run.go
+      linters: [staticcheck]
+      text: "SA1019: c.cfg.Run.ShowStats is deprecated: use Output.ShowStats instead."
+    - path: pkg/golinters/errcheck/errcheck.go
+      linters: [staticcheck]
+      text: "SA1019: errCfg.Exclude is deprecated: use ExcludeFunctions instead"
+    - path: pkg/golinters/errcheck/errcheck.go
+      linters: [staticcheck]
+      text: "SA1019: errCfg.Ignore is deprecated: use ExcludeFunctions instead"
+    - path: pkg/golinters/govet/govet.go
+      linters: [staticcheck]
+      text: "SA1019: cfg.CheckShadowing is deprecated: the linter should be enabled inside Enable."
+    - path: pkg/golinters/godot/godot.go
+      linters: [staticcheck]
+      text: "SA1019: settings.CheckAll is deprecated: use Scope instead"
+    - path: pkg/golinters/gci/gci.go
+      linters: [staticcheck]
+      text: "SA1019: settings.LocalPrefixes is deprecated: use Sections instead."
+    - path: pkg/golinters/mnd/mnd.go
+      linters: [staticcheck]
+      text: "SA1019: settings.Settings is deprecated: use root level settings instead."
+    - path: pkg/golinters/mnd/mnd.go
+      linters: [staticcheck]
+      text: "SA1019: config.GoMndSettings is deprecated: use MndSettings."
+
+    - path: pkg/golinters/gofumpt/gofumpt.go
+      linters: [staticcheck]
+      text: "SA1019: settings.LangVersion is deprecated: use the global `run.go` instead."
+    - path: pkg/golinters/internal/staticcheck_common.go
+      linters: [staticcheck]
+      text: "SA1019: settings.GoVersion is deprecated: use the global `run.go` instead."
+    - path: pkg/lint/lintersdb/manager.go
+      linters: [staticcheck]
+      text: "SA1019: (.+).(GoVersion|LangVersion) is deprecated: use the global `run.go` instead."
+
+    - path: pkg/golinters/unused/unused.go
+      linters: [gocritic]
+      text: "rangeValCopy: each iteration copies 160 bytes \\(consider pointers or indexing\\)"
+
+    - path: pkg/goanalysis/runner_loadingpackage.go
+      linters: [gosec]
+      text: "G115: integer overflow conversion uintptr -> int"
+
+    - path: test/bench/bench_test.go
+      linters: [gosec]
+      text: "G115: integer overflow conversion int -> int32"
+
+    - path: test/bench/bench_test.go
+      linters: [gosec]
+      text: "G115: integer overflow conversion uint64 -> int"
+
+run:
+  timeout: 5m

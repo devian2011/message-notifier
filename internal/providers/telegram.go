@@ -2,9 +2,9 @@ package providers
 
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"notifier/internal/entity"
 
-	"notifier/internal/handler"
-	"notifier/pkg/parse"
+	"notifier/pkg/config"
 )
 
 const (
@@ -20,7 +20,7 @@ type tgProviderConfig struct {
 func newTgProviderConfig(fields map[string]string) (tgProviderConfig, error) {
 	cfg := tgProviderConfig{}
 	if h, exists := fields["host"]; exists {
-		cfg.token = parse.GetValue(h)
+		cfg.token = config.GetValue(h)
 	} else {
 		return cfg, ErrEmptyProviderConfigRequiredValue
 	}
@@ -47,6 +47,6 @@ func NewTgProvider(cfg *Config) (*TgProvider, error) {
 	return &TgProvider{cfg: providerCfg, bot: bot}, nil
 }
 
-func (tg *TgProvider) Send(message handler.Message) error {
+func (tg *TgProvider) Send(message entity.Message) error {
 	return nil
 }

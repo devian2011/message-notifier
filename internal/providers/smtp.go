@@ -1,10 +1,10 @@
 package providers
 
 import (
+	"notifier/internal/entity"
 	"strconv"
 
-	"notifier/internal/handler"
-	"notifier/pkg/parse"
+	"notifier/pkg/config"
 )
 
 const (
@@ -21,7 +21,7 @@ type smtpProviderConfig struct {
 func newSmtpProviderConfig(fields map[string]string) (smtpProviderConfig, error) {
 	cfg := smtpProviderConfig{}
 	if h, exists := fields["host"]; exists {
-		cfg.host = parse.GetValue(h)
+		cfg.host = config.GetValue(h)
 	} else {
 		return cfg, ErrEmptyProviderConfigRequiredValue
 	}
@@ -32,12 +32,12 @@ func newSmtpProviderConfig(fields map[string]string) (smtpProviderConfig, error)
 	}
 
 	if u, exists := fields["username"]; exists {
-		cfg.username = parse.GetValue(u)
+		cfg.username = config.GetValue(u)
 	} else {
 		return cfg, ErrEmptyProviderConfigRequiredValue
 	}
 	if pwd, exists := fields["password"]; exists {
-		cfg.password = parse.GetValue(pwd)
+		cfg.password = config.GetValue(pwd)
 	} else {
 		return cfg, ErrEmptyProviderConfigRequiredValue
 	}
@@ -58,6 +58,6 @@ func NewSmtpProvider(cfg *Config) (*SmtpProvider, error) {
 	return &SmtpProvider{cfg: providerCfg}, nil
 }
 
-func (s *SmtpProvider) Send(message handler.Message) error {
+func (s *SmtpProvider) Send(message entity.Message) error {
 	return nil
 }

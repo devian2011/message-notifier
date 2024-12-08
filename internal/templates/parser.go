@@ -6,19 +6,19 @@ import (
 	"text/template"
 )
 
-func File(filePath string, params map[string]interface{}) (string, error) {
+func ParseFile(filePath string, params map[string]interface{}) (string, error) {
 	body, err := os.ReadFile(filePath)
 	if err != nil {
-		return "", err
+		return "", ErrTemplateFileNotExists
 	}
 
-	return String(string(body), params)
+	return Parse(string(body), params)
 }
 
-func String(body string, params map[string]interface{}) (string, error) {
+func Parse(body string, params map[string]interface{}) (string, error) {
 	buf := bytes.Buffer{}
 
-	tmpl, parseErr := template.New("parse").Parse(body)
+	tmpl, parseErr := template.New("config").Parse(body)
 	if parseErr != nil {
 		return "", parseErr
 	}

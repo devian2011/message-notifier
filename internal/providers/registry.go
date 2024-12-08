@@ -1,24 +1,24 @@
 package providers
 
-import "notifier/internal/handler"
+import "notifier/internal/sender"
 
 type Registry struct {
-	providers map[string]handler.Provider
+	providers map[string]sender.Provider
 }
 
-func NewRegistry(cfg []Config) (*Registry, error) {
-	registry := &Registry{providers: make(map[string]handler.Provider, len(cfg))}
-	for _, c := range cfg {
+func NewRegistry(cfg map[string]Config) (*Registry, error) {
+	registry := &Registry{providers: make(map[string]sender.Provider, len(cfg))}
+	for code, c := range cfg {
 		switch c.Provider {
 		case SmtpProviderCode:
 			var smtpInitErr error
-			registry.providers[c.Code], smtpInitErr = NewSmtpProvider(&c)
+			registry.providers[code], smtpInitErr = NewSmtpProvider(&c)
 			if smtpInitErr != nil {
 				return nil, smtpInitErr
 			}
 		case TgProviderCode:
 			var tgInitErr error
-			registry.providers[c.Code], tgInitErr = NewTgProvider(&c)
+			registry.providers[code], tgInitErr = NewTgProvider(&c)
 			if tgInitErr != nil {
 				return nil, tgInitErr
 			}
@@ -28,10 +28,10 @@ func NewRegistry(cfg []Config) (*Registry, error) {
 	return registry, nil
 }
 
-func (r *Registry) Get(code string) (handler.Provider, error) {
+func (r *Registry) Get(code string) (sender.Provider, error) {
 	if val, exists := r.providers[code]; exists {
 		return val, nil
 	}
 
-	return nil, ErrUnknownProviderWithCode
+	return nil, ErrUnknownProvider
 }

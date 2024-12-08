@@ -14,7 +14,7 @@ import (
 
 var configFilePath = flag.String("config", "./config.yaml", "configuration file path")
 
-func main() {
+func initLog() {
 	logLvl := os.Getenv("APP_LOG_LEVEL")
 	if logLvl == "" {
 		logLvl = "info"
@@ -26,6 +26,9 @@ func main() {
 	}
 
 	logrus.SetLevel(parsedLvl)
+}
+
+func main() {
 
 	ctx, stop := context.WithCancel(context.Background())
 	signal.NotifyContext(ctx, syscall.SIGKILL, syscall.SIGTERM, syscall.SIGABRT)
